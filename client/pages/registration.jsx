@@ -3,19 +3,22 @@ import Link from "next/link"
 import { useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import { ADD_DATA } from "../../store/reducers/signin"
-import { loginRules, passwordRules } from "./formConfig"
-import { loginRequest } from "./requests"
+import { ADD_DATA } from "../store/reducers/signin"
+import { regLoginRules, passwordRules } from "../components/auth/formConfig"
+import { registrationRequest } from "../components/auth/requests"
+import { useRouter } from "next/router"
 
-export const Login = () => {
+const Registration = () => {
+    const router = useRouter();
     const [msg, setMsg]  = useState('')
-    const { handleSubmit, control, resetField, setValue } = useForm({ mode: 'onChange' })
+    const { handleSubmit, control, reset, setValue } = useForm({ mode: 'onChange' })
     const dispatch = useDispatch()
     const onSubmit = async data => {
-        resetField('password')
-        const login = await loginRequest(data)
+        reset()
+        const login = await registrationRequest(data)
         if (login.access) {
             dispatch(ADD_DATA({ username: data.username }))
+            router.push('/')
         }else {
             setMsg(login.msg)
         }
@@ -24,11 +27,10 @@ export const Login = () => {
     return (
     <form onSubmit={handleSubmit(onSubmit)}>
         <Stack maxWidth={400} sx={{ fontSize: '10px', margin: '150px auto', textAlign: 'center' }}> 
-            <Typography variant="h3" sx={{ fontSize: 35, fontWeight: 700, marginBottom: 0.5 }}>Sign in</Typography>
-            <Typography sx={{ color: "text.secondary", marginBottom: 1 }}>To get access</Typography>
+            <Typography variant="h3" sx={{ fontSize: 35, fontWeight: 700, marginBottom: 0.5 }}>Sign up</Typography>
             <Typography sx={{ color: "red", marginBottom: 2.5, fontSize: 17 }}>{msg}</Typography>
             <Controller 
-            rules={loginRules}
+            rules={regLoginRules}
             control={control}
             name='username'
             defaultValue={''}
@@ -65,11 +67,13 @@ export const Login = () => {
             type='submit' 
             variant='contained'
             sx={{ marginBottom: 1 }} 
-            >Sign in</Button>
+            >Sign up</Button>
             <Typography sx={{ color: "text.secondary", marginTop: 2.5, fontSize: 21 }}>
-                Do you have account: <Link href='/registration'>sign up</Link>
+                Do you have account: <Link href='/'>sign in</Link>
             </Typography>
         </Stack>
     </form>
     )
 }
+
+export default Registration

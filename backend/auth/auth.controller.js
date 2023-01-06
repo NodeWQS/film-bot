@@ -34,7 +34,7 @@ class AuthController {
             const customer = await AdminModel.findOne({ username: req.body.username });
             const validation = await compare(req.body.password.toLowerCase(), customer.password);
 
-            if (customer && validation) {
+            if (validation) {
                 return res.status(200).json({ token: customer.accessToken });
             }
             return res.status(403).json({ msg: 'username or password not valid.' });
